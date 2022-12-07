@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+
+
+* {
+  box-sizing: border-box;
+}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0 10px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+.registerbtn {
+  background-color: #0483aa;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+li{display: inline;} 
+ul {    
+    word-spacing: 50px;
+    padding: 20px;
+    background-image: linear-gradient(to right,  #67afad,#09dfff);
+    letter-spacing: 2px;
+}
+a {
+    text-decoration: none;
+    color: white;
+    font-size: 2vw;
+    text-transform: uppercase;
+    font-width: solid;
+    font-family: sans-serif;
+}
+</style>
+</head>
+<body>
+  <section class="register">
+    <!--
+    <img src="./images/webpage.jpg" class="webpage">
+        <img src="./music.jfif" class="music">
+        <img src="webpage.jpg" class="webpage">
+    -->
+  </section>
+
+<form id="noteform">
+  <nav>  
+    <ul>  
+    <li>  
+    <a href="#"> Home </a>  
+    </li>  
+    <li>  
+    <a href="login.html"> Login </a>  
+    </li>  
+    <li>  
+      <a href="register.html"> Register </a>  
+      </li> 
+    <li>  
+    <a href="note.html"> Notes </a>  
+    </li>  
+    </ul>  
+    </nav> 
+  <div class="container">
+    <h1>Notes</h1>
+    <p>You can enter your notes</p>
+    <hr>
+
+    <label for="last_name"><b>Note</b></label>
+    <input type="text" placeholder="Enter your note" name="note" id="note" required>
+
+    <button type="submit" class="registerbtn" >Submit</button>
+  </div>
+  
+</form>
+<script src="main.js"></script>
+</body>
+</html>
+
