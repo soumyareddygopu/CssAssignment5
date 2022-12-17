@@ -40,7 +40,7 @@ router
   })
   .post('/create', async (req, res) => {
     try {
-      console.log(req.body)
+  
       let note = await Note.createNote(req.body);
       res.send(note);
     } catch(err) {
