@@ -1,4 +1,4 @@
-const notes=[{
+/*const notes=[{
     noteId:11,
     noteDescription:"This is 1st note"
 },{
@@ -7,7 +7,7 @@ const notes=[{
 },{
     noteId:33,
     noteDescription:"This is 3rd note"
-},]
+},]*/
 
 let getNotes=()=>notes;
 
@@ -17,11 +17,11 @@ const con = require("./db_connect");
 // Table Creation 
 async function createTable() {
   let sql=`CREATE TABLE IF NOT EXISTS notes (
-    noteID INT NOT NULL AUTO_INCREMENT,
-    noteContent VARCHAR(255),
-    userID INT NOT NULL,
-    CONSTRAINT notePK PRIMARY KEY(noteID),
-    CONSTRAINT noteFK FOREIGN KEY(noteID) references users(userID)
+    note_id INT NOT NULL AUTO_INCREMENT,
+    note VARCHAR(255),
+    user_id INT NOT NULL,
+    CONSTRAINT note_PK PRIMARY KEY(note_id),
+    CONSTRAINT note_FK FOREIGN KEY(note_id) references users(user_id)
   ); `
   await con.query(sql);
 }
@@ -33,20 +33,30 @@ async function getAllNotes() {
   let notes = await con.query(sql);
   console.log(notes)
 }
+getAllNotes();
 
+ //create notes
+ async function createNote(note){
+  
+  let sql=`INSERT INTO notes (user_id,note) VALUES ("${note.user_id}", "${note.note}");`
+
+ await con.query(sql);
+return {message:"Successfully added notes"};
+
+}
 
 // Read Note
 async function Read(note) { //content:"hello world"
   let cNote = await getNote(note); 
-  if(!cNote[0]) throw Error("NoteID not found");
+  if(!cNote[0]) throw Error("Note ID not found");
   return cNote[0];
 }
 
 // Update Note function
 async function editNotes(note) {
   let sql = `UPDATE notes 
-    SET noteContent = "${note.noteContent}"
-    WHERE userID = ${note.user_id}
+    SET note = "${note.note}"
+    WHERE user_id = ${note.user_id}
   `;
 
   await con.query(sql);
@@ -57,7 +67,7 @@ async function editNotes(note) {
 // Delete Note function
 async function deleteNote(note) {
   let sql = `DELETE FROM notes
-    WHERE userID = ${note.user_id}
+    WHERE user = ${note.user_id}
   `
   await con.query(sql);
 }
@@ -66,15 +76,15 @@ async function deleteNote(note) {
 async function getNote(note) {
   let sql;
 
-  if(note.userID) {
+  if(note.user_id) {
     sql = `
       SELECT * FROM notes
-       WHERE userID = "${note.user_id}"
+       WHERE user_id = "${note.user_id}"
     `
   } else {
     sql = `
     SELECT * FROM notes 
-      WHERE noteID = "${note.noteID}"
+      WHERE note_id = "${note.note_id}"
   `;
   }
   return await con.query(sql);  

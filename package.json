@@ -1,7 +1,7 @@
 {
   "name": "cssassignment5",
   "version": "1.0.0",
-  "description": "",
+  "description": "NOTE TAKING APPLICATION.\r This is note taking app consists created 3 webpages \r user page\r register page\r note page\r User page includes 2 fields I.e Username and password\r Register page includes 4 fields fname,lname,email and password\r Note page includes 1 field notes",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
@@ -16,5 +16,13 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.20"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/soumyareddygopu/CssAssignment5.git"
+  },
+  "bugs": {
+    "url": "https://github.com/soumyareddygopu/CssAssignment5/issues"
+  },
+  "homepage": "https://github.com/soumyareddygopu/CssAssignment5#readme"
 }

@@ -1,4 +1,4 @@
-//
+/*
 const users=[{
   userId:1,
   userName:"Soumya",
@@ -14,7 +14,7 @@ const users=[{
   userName:"sdfghrty",
   password:"@fghnbv#$5*"
 },
-];
+];*/
 
 let getUsers=()=>users;
 
@@ -28,7 +28,7 @@ const con = require("./db_connect");
 async function createTable() {
 let sql=`CREATE TABLE IF NOT EXISTS users (
   user_id INT NOT NULL AUTO_INCREMENT,
-  Email or username VARCHAR(255) NOT NULL UNIQUE,
+  Username VARCHAR(255) NOT NULL UNIQUE,
   firstname VARCHAR(225) NOT NULL,
   lastname VARCHAR(225) NOT NULL,
   password VARCHAR(255) NOT NULL,
@@ -50,8 +50,8 @@ async function register(user) {
 let cUser = await getUser(user);
 if(cUser.length > 0) throw Error("Username already in use");
 
-const sql = `INSERT INTO users (username, password)
-  VALUES ("${user.username}", "${user.password}");
+const sql = `INSERT INTO users (Username, password,firstname,lastname)
+  VALUES ("${user.Username}", "${user.password}","${user.firstname}","${user.lastname}");
 `
 await con.query(sql);
 return await login(user);
@@ -70,8 +70,8 @@ return cUser[0];
 // Update User function
 async function editUser(user) {
 let sql = `UPDATE users 
-  SET userName = "${user.username}"
-  WHERE userID = ${user.userID}
+  SET userName = "${user.Username}"
+  WHERE userID = ${user.user_id}
 `;
 
 await con.query(sql);
@@ -99,7 +99,7 @@ if(user.user_id) {
 } else {
   sql = `
   SELECT * FROM users 
-    WHERE userName = "${user.username}"
+    WHERE userName = "${user.Username}"
 `;
 }
 return await con.query(sql);  

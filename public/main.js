@@ -1,43 +1,85 @@
- // getUsers button 
- document.getElementById("btn-users").addEventListener('click', getUsers);
-
- function getUsers() {
-  fetch("http://localhost:3000/users/")
-  .then((res)=> res.json())
-   .then((data) => console.log(data))
-   .catch((err)=> console.log(err))
- }
-
-
+async function fetchData(route = '', data = {}, methodType) {
+  const response = await fetch(`http://localhost:3000${route}`, {
+    method: methodType, // *GET, POST, PUT, DELETE, etc.
+    mode: 'cors', // no-cors, *cors, same-origin
+    cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: 'same-origin', // include, *same-origin, omit
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    redirect: 'follow', // manual, *follow, error
+    referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data) // body data type must match "Content-Type" header
+  });
+  if(response.ok) {
+    return await response.json(); // parses JSON response into native JavaScript objects
+  } else {
+    throw await response.json();
+  }
+}
 
  class User {
-    constructor(Username , password) {
+    constructor(Username , password,firstName,lastName) {
       this.setEmail(Username)
-      this.setPassword(password)
-    }
-    getUsername() { return this.Username; }
-    getPassword() { return this.password; }
-    setUsername(Username) { this.Username = Username; }
-    setPassword(password) { this.password = password; }
-  }
-
-
-  class Register {
-    constructor(email , password,firstName,lastName) {
-      this.setEmail(email)
       this.setPassword(password)
       this.setFirstName(firstName)
       this.setLastName(lastName)
     }
-    getEmail() { return this.email; }
+    getUsername() { return this.Username; }
     getPassword() { return this.password; }
     getFirstName() { return this.firstName; }
     getLastName() { return this.lastName; }
-    setEmail(email) { this.email = email; }
+    setUsername(Username) { this.Username = Username; }
     setPassword(password) { this.password = password; }
     setFirstName(firstName) { this.firstName = firstName;}
     setLastName(lastName) { this.lastName = lastName;}
   }
+
+
+  let rForm = document.getElementById("register-form");
+  if(rForm) rForm.addEventListener('submit', register);
+  
+  function register(e) {
+    e.preventDefault();
+  
+    let Username = document.getElementById("username").value;
+    let firstname = document.getElementById("fname").value;
+    let  lastname = document.getElementById("Lname").value;
+    let password = document.getElementById("password").value;
+    let user = new User(Username, password,firstname, lastname);
+    //console.log(user)
+    fetchData("/users/register", user, "POST")
+    .then((data) => {
+      setCurrentUser(data);
+      
+      window.location.href = "note.html";
+    })
+    .catch((err) =>{
+      console.log(err);
+    })
+  }
+  let lForm = document.getElementById("login-page");
+  if(lForm) lForm.addEventListener('submit', login);
+  
+  function login(e) {
+    e.preventDefault();
+  
+    let Username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+    let user = new User(Username,password);
+    
+  //console.log(user)
+    fetchData("/users/login", user, "POST")
+    .then((data) => {
+      setCurrentUser(data);
+      alert("Successfully logged-in")
+      window.location.href = "note.html";
+    })
+    .catch((err) => {
+      console.log(`Error!!! ${err.message}`)
+    }) 
+  }
+    
 
 
   class Note {
@@ -49,73 +91,43 @@
   }
 
 
-  
-function getLoginData(){
-console.log("Fetching login data information...")
-const user = new User(document.getElementById("username").value, document.getElementById("password").value);
-console.log("The user id is : ",user.getUsernamemail());
-console.log("The password is : ",user.getPassword() );
-}
+let note = document.getElementById("noteform");
+if(note) note.addEventListener('submit',notePageFunction)
+function notePageFunction(e){
+    e.preventDefault();
+    let notey= document.getElementById('note').value;
+    const note = new Note(notey);
+    let user=getCurrentUser();
+    note.userID = user.userID;
+    fetchData("/notes/create", note, "POST")
+    .then((data) => {
+      //setCurrentUser(data);
 
-function getRegestrationsData(){
-    console.log("Fetching Register data information...")
-    const register = new Register(document.getElementById("email").value, document.getElementById("psw").value,document.getElementById("first_name").value,document.getElementById("last_name").value);
-    console.log("The email id is : ",register.getEmail());
-    console.log("The password data is : ",register.getPassword());
-    console.log("The first name data is : ",register.getFirstName());
-    
-    console.log("The last name  data is : ",register.getLastName());
-    
-}
-
-function getNoteData(){
-console.log("Fetching note data information...")
-const note = new Note(document.getElementById("note").value);
-console.log("The note data is : ",note.getNote());
-}
-/****************** */
-
-const usersBtn=document.getElementById("users-btn");
-
-if(usersBtn)usersBtn.addEventListener('click',getUsers);
-
-function getUsers(){
-    fetch("http://localhost:3000/users/")
-    .then((res)=>res.json())
-    .then((data)=>{
-        
-        let ul=document.getElementById("allUsers");
-
-        data.forEach((user)=>{
-            let li=document.createElement('li');
-            let text=document.createTextNode(user.userName);
-
-            li.appendChild(text);
-            ul.appendChild(li);
-        })
+      window.location.href = "note.html";
     })
-
-    .catch((err)=>console.log(`error! ${err}`));
+    .catch((err) =>{
+      console.log(err);
+    })
+ document.getElementById("noteform").reset();
 }
 
-const notesBtn=document.getElementById("notes-btn");
-if(notesBtn)notesBtn.addEventListener('click',getNotes);
+  // logout event listener
+  let logout = document.getElementById("logout-btn");
+  if(logout) logout.addEventListener('click', removeCurrentUser)
+  
+  // stateful mechanism for user
+  // logging in a user
+  function setCurrentUser(user) {
+    localStorage.setItem('user', JSON.stringify(user));
+  }
+  // getting current user function
+  // FIX this next class
+  function getCurrentUser() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
+  // logout function for current user
+  function removeCurrentUser() {
+    localStorage.removeItem('user');
+    window.location.href="login.html";
+  }
 
- function getNotes(){
-     fetch("http://localhost:3000/notes/")
-     .then((res)=>res.json())
-     .then((data)=>{
-         let ul=document.getElementById("allNotes");
-
-         data.forEach((note)=>{
-             let li=document.createElement('li');
-             let text=document.createTextNode(note.noteDescription);
-             li.appendChild(text);
-             ul.appendChild(li);
-
-         })
-
-
-     })
-     .catch((err)=>console.log(`Error! ${err}`));
- }
